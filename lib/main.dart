@@ -1,9 +1,17 @@
 import 'package:event_scanner_app/ui/pages/auth_pages/login_page.dart';
 import 'package:event_scanner_app/ui/pages/main_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
+import 'package:mmkv/mmkv.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final rootDir = await MMKV.initialize();
+  Logger().i('MMKV initialized at: $rootDir');
+
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CustomHeader extends StatefulWidget {
+class CustomHeader extends ConsumerWidget {
   const CustomHeader({super.key});
 
-  @override
-  State<CustomHeader> createState() => _CustomHeaderState();
-}
+  String _getGreeting() {
+    var hour = DateTime.now().hour;
+    if (hour < 12) return 'Good Morning';
+    if (hour < 15) return 'Good Afternoon';
+    if (hour < 18) return 'Good Evening';
+    return 'Good Night';
+  }
 
-class _CustomHeaderState extends State<CustomHeader> {
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final user = ref.watch(userProvider);
+
     return Row(
       children: [
         // Logo Image
@@ -30,7 +35,7 @@ class _CustomHeaderState extends State<CustomHeader> {
               ),
             ),
             Text(
-              getGreeting(),
+              _getGreeting(),
               style: TextStyle(color: Colors.white70, fontSize: 14),
             ),
           ],
@@ -45,19 +50,5 @@ class _CustomHeaderState extends State<CustomHeader> {
         ),
       ],
     );
-  }
-}
-
-String getGreeting() {
-  var hour = DateTime.now().hour;
-
-  if (hour < 12) {
-    return 'Good Morning';
-  } else if (hour < 15) {
-    return 'Good Afternoon';
-  } else if (hour < 18) {
-    return 'Good Evening';
-  } else {
-    return 'Good Night';
   }
 }

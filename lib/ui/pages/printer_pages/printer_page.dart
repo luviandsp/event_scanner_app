@@ -2,51 +2,25 @@ import 'dart:async';
 import 'package:event_scanner_app/ui/components/auto_print_switch.dart';
 import 'package:event_scanner_app/ui/components/printer_card.dart';
 import 'package:event_scanner_app/ui/utils/custom_colors.dart';
+import 'package:event_scanner_app/view_model/auto_print_view_model.dart';
+import 'package:event_scanner_app/view_model/printer_list_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
-class PrinterPage extends StatefulWidget {
+class PrinterPage extends ConsumerStatefulWidget {
   const PrinterPage({super.key});
 
   @override
-  State<PrinterPage> createState() => _PrinterPageState();
+  ConsumerState<PrinterPage> createState() => _PrinterPageState();
 }
 
-class _PrinterPageState extends State<PrinterPage> {
+class _PrinterPageState extends ConsumerState<PrinterPage> {
   final Logger logger = Logger();
-  bool isAutoPrintOn = true;
 
   final TextEditingController _searchController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   Timer? _debounce;
-
-  List<Map<String, dynamic>> printers = [
-    {
-      'name': 'Epson L-300 Series',
-      'status': 'Available',
-      'is_available': true,
-      'current_template': 'Check Struct',
-    },
-    {
-      'name': 'Brother HL-L2350DW',
-      'status': 'Not Available',
-      'is_available': false,
-      'current_template': 'Name Badge',
-    },
-    {
-      'name': 'HP LaserJet Pro M15w',
-      'status': 'Available',
-      'is_available': true,
-      'current_template': 'Event Ticket',
-    },
-    {
-      'name': 'Canon Pixma G2010',
-      'status': 'Available',
-      'is_available': true,
-      'current_template': 'Check Struct',
-    },
-  ];
 
   @override
   void dispose() {
@@ -58,21 +32,24 @@ class _PrinterPageState extends State<PrinterPage> {
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
+      ref.read(printerListProvider.notifier).searchPrinter(query);
       logger.i('Searching for printers with query: $query');
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isAutoPrintOn = ref.watch(autoPrintProvider);
+    final printerState = ref.watch(printerListProvider);
+    final printers = printerState.filteredPrinters;
+
     return Column(
       children: [
         AutoPrintSwitch(
           value: isAutoPrintOn,
           onChanged: (newValue) {
-            setState(() {
-              isAutoPrintOn = newValue;
-              logger.i('Auto Print is now: $isAutoPrintOn');
-            });
+            ref.read(autoPrintProvider.notifier).setAutoPrint(newValue);
+            logger.i('Auto Print toggled to: $newValue');
           },
         ),
 
@@ -142,6 +119,8 @@ class _PrinterPageState extends State<PrinterPage> {
             ),
           ),
         ),
+
+        const SizedBox(height: 20),
       ],
     );
   }

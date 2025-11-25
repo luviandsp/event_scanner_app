@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/login': (context) => const LoginPage(),
-        // '/': (context) => const MainPage(),
-        '/': (context) => const TechTalkScreen(),
+        '/': (context) => const MainPage(),
+        '/detail-ticket': (context) => const TechTalkScreen(),
       },
     );
   }

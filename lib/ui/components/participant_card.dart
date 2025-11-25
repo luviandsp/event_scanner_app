@@ -1,4 +1,4 @@
-import 'package:event_scanner_app/ui/data/ticket_data.dart';
+import 'package:event_scanner_app/data/models/ticket_data.dart';
 import 'package:flutter/material.dart';
 
 class ParticipantCard extends StatelessWidget {

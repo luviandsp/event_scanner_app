@@ -24,7 +24,9 @@ class _AutoPrintSwitchState extends State<AutoPrintSwitch> {
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: CustomColors.lightGreen, width: 2),
       ),
+
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

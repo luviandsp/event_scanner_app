@@ -34,21 +34,26 @@ class _CustomBodyState extends State<CustomBody> {
           ),
 
           child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
+            padding: const EdgeInsets.symmetric(vertical: 25),
             children: [
-              TodayCalendar(),
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0),
+                child: TodayCalendar(),
+              ),
 
               const SizedBox(height: 20),
 
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    _buildTabButton('My Event', 0),
-                    _buildTabButton('My Statistic', 1),
-                    _buildTabButton('Printer', 2),
-                  ],
+              Center(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      _buildTabButton('My Event', 0),
+                      _buildTabButton('My Statistic', 1),
+                      _buildTabButton('Printer', 2),
+                    ],
+                  ),
                 ),
               ),
 
@@ -79,7 +84,7 @@ class _CustomBodyState extends State<CustomBody> {
     bool isActive = _selectedIndex == index;
 
     return Container(
-      margin: const EdgeInsets.only(right: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ElevatedButton(
         onPressed: () {
           setState(() {

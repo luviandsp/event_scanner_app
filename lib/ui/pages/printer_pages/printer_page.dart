@@ -43,85 +43,98 @@ class _PrinterPageState extends ConsumerState<PrinterPage> {
     final printerState = ref.watch(printerListProvider);
     final printers = printerState.filteredPrinters;
 
-    return Column(
-      children: [
-        AutoPrintSwitch(
-          value: isAutoPrintOn,
-          onChanged: (newValue) {
-            ref.read(autoPrintProvider.notifier).setAutoPrint(newValue);
-            logger.i('Auto Print toggled to: $newValue');
-          },
-        ),
-
-        const SizedBox(height: 20),
-
-        Align(
-          alignment: Alignment.centerLeft,
-          child: const Text(
-            'Available Printers',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Column(
+        children: [
+          AutoPrintSwitch(
+            value: isAutoPrintOn,
+            onChanged: (newValue) {
+              ref.read(autoPrintProvider.notifier).setAutoPrint(newValue);
+              logger.i('Auto Print toggled to: $newValue');
+            },
           ),
-        ),
 
-        const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
-        Form(
-          key: _formKey,
-          child: TextFormField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Search Printers',
-              suffixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(color: CustomColors.lightGreen),
-              ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: const Text(
+              'Available Printers',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            onChanged: _onSearchChanged,
           ),
-        ),
 
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: printers.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 15),
-          itemBuilder: (context, index) {
-            return PrinterCard(printer: printers[index]);
-          },
-        ),
+          const SizedBox(height: 10),
 
-        Align(
-          alignment: Alignment.centerRight,
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: CustomColors.darkGreen,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min, // Agar tombol tidak lebar full
-              children: const [
-                Text(
-                  'Add Printer',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+          Form(
+            key: _formKey,
+            child: TextFormField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search Printers',
+                suffixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: CustomColors.lightGreen),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    color: CustomColors.darkGreen,
+                    width: 2,
                   ),
                 ),
-                SizedBox(width: 8),
-                Icon(Icons.add, color: Colors.white, size: 20),
-              ],
+              ),
+              onChanged: _onSearchChanged,
             ),
           ),
-        ),
 
-        const SizedBox(height: 20),
-      ],
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: printers.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 15),
+            itemBuilder: (context, index) {
+              return PrinterCard(printer: printers[index]);
+            },
+          ),
+
+          const SizedBox(height: 20),
+
+          Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: CustomColors.darkGreen,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text(
+                    'Add Printer',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Icon(Icons.add, color: Colors.white, size: 20),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

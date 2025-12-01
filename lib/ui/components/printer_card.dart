@@ -1,5 +1,7 @@
+import 'package:event_scanner_app/ui/components/template_printer_config_dialog.dart';
 import 'package:event_scanner_app/ui/utils/custom_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/web.dart';
 
 class PrinterCard extends StatefulWidget {
   final Map<String, dynamic> printer;
@@ -79,7 +81,27 @@ class _PrinterCardState extends State<PrinterCard> {
                     SizedBox(
                       height: 32,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return TemplatePrinterConfigDialog(
+                                printerName: widget.printer['name'],
+                                currentTemplate:
+                                    widget.printer['current_template'],
+                                onConfirm: (newTemplate) {
+                                  setState(() {
+                                    widget.printer['current_template'] =
+                                        newTemplate;
+                                  });
+                                  Logger().i(
+                                    'Printer "${widget.printer['name']}" template changed to "$newTemplate"',
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: CustomColors.yellow,
                           elevation: 0,

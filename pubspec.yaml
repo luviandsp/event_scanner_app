@@ -49,6 +49,8 @@ dependencies:
   riverpod_generator: ^3.0.3
   build_runner: ^2.7.1
   mmkv: ^2.2.4
+  qr_flutter: ^4.1.0
+  lottie: ^3.3.2
 
 dev_dependencies:
   flutter_test:

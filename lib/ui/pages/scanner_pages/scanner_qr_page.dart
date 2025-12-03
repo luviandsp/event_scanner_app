@@ -1,20 +1,10 @@
-import 'package:event_scanner_app/ui/utils/custom_colors.dart'; // Pastikan path ini benar
+import 'package:event_scanner_app/data/models/ticket_data.dart'; // Import Model Participant
+import 'package:event_scanner_app/ui/components/scan_result_dialog.dart';
+import 'package:event_scanner_app/ui/pages/scanner_pages/myqr_page.dart';
+import 'package:event_scanner_app/ui/pages/scanner_pages/scanner_result.dart';
+import 'package:event_scanner_app/ui/utils/custom_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-
-// Placeholder untuk halaman hasil (jika belum ada)
-class ScanResultScreen extends StatelessWidget {
-  final String qrData;
-  const ScanResultScreen({super.key, required this.qrData});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Hasil Scan")),
-      body: Center(child: Text("Data: $qrData")),
-    );
-  }
-}
 
 class ScannerQrPage extends StatefulWidget {
   const ScannerQrPage({super.key});
@@ -26,48 +16,30 @@ class ScannerQrPage extends StatefulWidget {
 class _ScannerQrPageState extends State<ScannerQrPage> {
   // Controller untuk scanner
   final MobileScannerController controller = MobileScannerController(
-    // autoStart: true biasanya lebih aman agar kamera langsung nyala saat widget dibuat
     autoStart: true,
     torchEnabled: false,
     facing: CameraFacing.back,
   );
 
-  // Variable untuk mencegah navigasi ganda saat scan berhasil
-  // Variable state (Ubah nama sesuai preferensi, misal _isAlreadyScan atau _isScanCompleted)
   bool _isScanCompleted = false;
-
-  // Fungsi untuk melakukan Rescan / Manual Scan
-  void _scanManual() {
-    setState(() {
-      _isScanCompleted = false; // Reset status agar bisa scan lagi
-    });
-    controller.start(); // Perintah ke library untuk menyalakan kamera kembali
-  }
-
-  // Update fungsi onDetect (di dalam MobileScanner)
-  void _onDetect(BarcodeCapture capture) {
-    if (_isScanCompleted) return; // Cegah double scan
-
-    final String? code = capture.barcodes.first.rawValue;
-    if (code != null) {
-      setState(() {
-        _isScanCompleted = true; // Tandai sudah selesai
-      });
-      controller.stop(); // Matikan kamera (hemat baterai)
-
-      // ... Lakukan navigasi atau tampilkan dialog error di sini ...
-      // Jika scan "Gagal" (misal tiket tidak valid), user akan melihat tombol Rescan
-    }
-  }
+  ScanStatus? status;
+  Participant? data = Participant(
+    id: "USR-001",
+    name: "John Doe",
+    email: "john@example.com",
+    ticketCode: "090",
+    date: "2024-12-12",
+    imageUrl: "https://i.pravatar.cc/150?u=1", // Gambar dummy
+    status: "ready",
+  );
 
   @override
   void dispose() {
-    // Dispose controller saat halaman ditutup
     controller.dispose();
     super.dispose();
   }
 
-  // Fungsi untuk reset scanner saat kembali dari halaman detail
+  // Fungsi untuk reset scanner (Ditekan saat tombol di Dialog diklik)
   void _resetScanner() {
     setState(() {
       _isScanCompleted = false;
@@ -75,14 +47,85 @@ class _ScannerQrPageState extends State<ScannerQrPage> {
     controller.start();
   }
 
+  // --- LOGIKA UTAMA DI SINI ---
+  void _handleBarcode(BarcodeCapture capture) {
+    // 1. Cegah double scan
+    if (_isScanCompleted) return;
+
+    final String? code = capture.barcodes.first.rawValue;
+
+    if (code != null) {
+      // 2. Stop Kamera & Update State
+      setState(() {
+        _isScanCompleted = true;
+      });
+      controller.stop(); // Penting: Matikan kamera saat dialog muncul
+
+      // 3. SIMULASI LOGIKA DATABASE (Ganti ini dengan API Call nanti)
+      // Kita tentukan status berdasarkan kode QR yang discan untuk testing
+
+      if (code.contains("VALID")) {
+        // CASE 1: BERHASIL
+        status = ScanStatus.success;
+      } else if (code.contains("USED")) {
+        // CASE 2: SUDAH DIPAKAI
+        status = ScanStatus.alreadyUsed;
+        data = Participant(
+          id: "USR-999",
+          name: "Jane Smith",
+          email: "jane@example.com",
+          ticketCode: code,
+          date: "2024-12-10",
+          imageUrl: "https://i.pravatar.cc/150?u=2",
+          status: "checked_in",
+        );
+      } else {
+        // CASE 3: TIDAK DITEMUKAN
+        status = ScanStatus.notFound;
+        data = null;
+      }
+
+      // 4. TAMPILKAN DIALOG HASIL
+      showDialog(
+        context: context,
+        barrierDismissible: false, // User tidak bisa tap di luar untuk tutup
+        builder: (context) {
+          return ScanResultDialog(
+            status: status!,
+            participant: data,
+            onActionPressed: () {
+              // Tutup Dialog
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ScanResultPage(scannedCode: code),
+                ),
+              );
+              // Nyalakan scanner lagi
+              _resetScanner();
+            },
+          );
+        },
+      );
+    }
+  }
+
+  // Fungsi Manual Scan (Tombol Rescan)
+  void _scanManual() {
+    _resetScanner();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: CustomColors.blue, // Pastikan warna ini ada
-        title: const Text(
-          "Scan QR Code",
-          style: TextStyle(color: Colors.white),
+        backgroundColor: CustomColors.blue,
+        title: Center(
+          child: const Text(
+            "Scan QR Code",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -90,52 +133,28 @@ class _ScannerQrPageState extends State<ScannerQrPage> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.lightbulb_outline, color: Colors.white),
-            onPressed: () => controller.toggleTorch(),
+            icon: const Icon(Icons.qr_code_rounded, color: Colors.white),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyQRPage(participant: data!),
+              ),
+            ),
           ),
+          // IconButton(
+          //   icon: const Icon(Icons.lightbulb_outline, color: Colors.white),
+          //   onPressed: () => controller.toggleTorch(),
+          // ),
         ],
       ),
       body: Stack(
         children: [
           MobileScanner(
             controller: controller,
-            // onDetect akan terpanggil setiap kali kamera melihat QR
-            onDetect: (BarcodeCapture capture) {
-              // 1. Cek apakah proses scan sudah selesai sebelumnya
-              if (_isScanCompleted) return;
-
-              // 2. Ambil data barcode
-              final List<Barcode> barcodes = capture.barcodes;
-
-              if (barcodes.isNotEmpty) {
-                final Barcode firstBarcode = barcodes.first;
-                final String? code = firstBarcode.rawValue;
-
-                if (code != null) {
-                  // 3. Tandai scan selesai & Stop kamera
-                  setState(() {
-                    _isScanCompleted = true;
-                  });
-                  // Opsional: Bunyikan suara beep atau getar di sini
-
-                  // 4. Navigasi ke halaman hasil
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ScanResultScreen(qrData: code),
-                    ),
-                  ).then((_) {
-                    // 5. Restart scanner saat user kembali dari halaman hasil
-                    _resetScanner();
-                  });
-                }
-              }
-            },
+            onDetect: _handleBarcode, // Panggil fungsi handle barcode di sini
           ),
 
-          // --- Overlay UI (Kotak & Teks) ---
-
-          // Gelapkan area di luar kotak scan (Opsional, agar terlihat pro)
+          // --- Overlay UI (Area Gelap) ---
           ColorFiltered(
             colorFilter: ColorFilter.mode(
               Colors.black.withOpacity(0.5),
@@ -163,7 +182,7 @@ class _ScannerQrPageState extends State<ScannerQrPage> {
             ),
           ),
 
-          // Border kotak scanner (Garis Biru)
+          // Border Scanner Biru
           Center(
             child: Container(
               width: 250,
@@ -192,15 +211,14 @@ class _ScannerQrPageState extends State<ScannerQrPage> {
             ),
           ),
 
+          // Tombol Rescan (Muncul jika scanner dihentikan manual atau error)
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 50.0), // Jarak dari bawah
+              padding: const EdgeInsets.only(bottom: 50.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _isScanCompleted
-                      ? Colors.red
-                      : Colors.blue, // Merah jika stop, Biru jika aktif
+                  backgroundColor: _isScanCompleted ? Colors.red : Colors.blue,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 16,
@@ -209,12 +227,8 @@ class _ScannerQrPageState extends State<ScannerQrPage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                // PERBAIKAN PENTING: Jangan pakai tanda kurung () di sini
+                // Tombol hanya aktif jika scan sudah stop (untuk manual restart)
                 onPressed: _isScanCompleted ? _scanManual : null,
-
-                // Logika Text:
-                // Jika scan selesai/berhenti -> Tampilkan "Rescan"
-                // Jika sedang scanning -> Tampilkan "Scanning..." atau sembunyikan
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

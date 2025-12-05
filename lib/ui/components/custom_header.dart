@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:event_scanner_app/ui/pages/profile_pages/profile_page.dart';
 
 class CustomHeader extends ConsumerWidget {
   const CustomHeader({super.key});
@@ -43,10 +44,18 @@ class CustomHeader extends ConsumerWidget {
 
         const Spacer(),
 
-        // Profile Image
-        const CircleAvatar(
-          radius: 25,
-          backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=5'),
+        // Profile Image & Tap to Profile Page
+        GestureDetector(
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const ProfilePage()),
+            );
+          },
+          child: const CircleAvatar(
+            radius: 25,
+            backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=5'),
+          ),
         ),
       ],
     );

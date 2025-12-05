@@ -1,4 +1,4 @@
-import 'package:event_scanner_app/ui/pages/auth_pages/login_page.dart';
+import 'package:event_scanner_app/ui/pages/auth_pages/login_page_staff.dart';
 import 'package:event_scanner_app/ui/pages/detail_ticket/ticket_detil.dart';
 import 'package:event_scanner_app/ui/pages/main_page.dart';
 import 'package:event_scanner_app/ui/pages/scanner_pages/myqr_page.dart';
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(useMaterial3: true),
       initialRoute: '/scan-ticket',
       routes: {
-        '/login': (context) => const LoginPage(),
+        '/login': (context) => const LoginPageStaff(),
         '/': (context) => const MainPage(),
         '/detail-ticket': (context) => const TechTalkScreen(),
         // '/myqr-page': (context) => const MyQRPage(participant: participant),

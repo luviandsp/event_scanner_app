@@ -5,7 +5,7 @@ import 'package:event_scanner_app/ui/pages/event_ticket_pages/event_page.dart';
 import 'package:event_scanner_app/ui/pages/printer_pages/printer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../data/models/event_viewmodel.dart';
+import '../../view_model/event_viewmodel.dart';
 
 class CustomBody extends StatefulWidget {
   const CustomBody({super.key});

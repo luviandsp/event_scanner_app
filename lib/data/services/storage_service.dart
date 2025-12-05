@@ -29,4 +29,6 @@ class StorageService {
   }
 }
 
-final storageServiceProvider = Provider<StorageService>((ref) => StorageService());
+final storageServiceProvider = Provider<StorageService>(
+  (ref) => StorageService(),
+);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:event_scanner_app/data/models/event_viewmodel.dart';
+import 'package:event_scanner_app/view_model/event_viewmodel.dart';
 import 'package:event_scanner_app/data/models/event_model.dart';
 import 'package:event_scanner_app/ui/utils/custom_colors.dart';
 

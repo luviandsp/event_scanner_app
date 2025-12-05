@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:event_scanner_app/data/models/printer_state.dart';
+import 'package:event_scanner_app/ui/components/add_bluetooth_devices_dialog.dart';
 import 'package:event_scanner_app/ui/components/auto_print_switch.dart';
 import 'package:event_scanner_app/ui/components/printer_card.dart';
 import 'package:event_scanner_app/ui/utils/custom_colors.dart';
 import 'package:event_scanner_app/view_model/auto_print_view_model.dart';
-import 'package:event_scanner_app/view_model/printer_list_view_model.dart';
+import 'package:event_scanner_app/view_model/printer_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
@@ -32,7 +34,7 @@ class _PrinterPageState extends ConsumerState<PrinterPage> {
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      ref.read(printerListProvider.notifier).searchPrinter(query);
+      ref.read(printerViewModelProvider.notifier).loadSavedPrinters(query);
       logger.i('Searching for printers with query: $query');
     });
   }
@@ -40,8 +42,20 @@ class _PrinterPageState extends ConsumerState<PrinterPage> {
   @override
   Widget build(BuildContext context) {
     final isAutoPrintOn = ref.watch(autoPrintProvider);
-    final printerState = ref.watch(printerListProvider);
-    final printers = printerState.filteredPrinters;
+    final printerViewModelState = ref.watch(printerViewModelProvider);
+    final printerViewModel = ref.read(printerViewModelProvider.notifier);
+
+    ref.listen<PrinterState>(printerViewModelProvider, (previous, next) {
+      if (next.errorMessage != null &&
+          next.errorMessage != previous?.errorMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.errorMessage!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -90,22 +104,48 @@ class _PrinterPageState extends ConsumerState<PrinterPage> {
             ),
           ),
 
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: printers.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 15),
-            itemBuilder: (context, index) {
-              return PrinterCard(printer: printers[index]);
-            },
-          ),
+          printerViewModelState.isLoading
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: CircularProgressIndicator(),
+                )
+              : printerViewModelState.savedDevices.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 10,
+                  ),
+                  child: Text(
+                    'No saved printers found. Please add a printer.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  ),
+                )
+              : ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: printerViewModelState.savedDevices.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 15),
+                  itemBuilder: (context, index) {
+                    return PrinterCard(
+                      printer: printerViewModelState.savedDevices[index],
+                    );
+                  },
+                ),
 
           const SizedBox(height: 20),
 
           Align(
             alignment: Alignment.centerRight,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AddBluetoothDevicesDialog();
+                  },
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: CustomColors.darkGreen,
                 shape: RoundedRectangleBorder(

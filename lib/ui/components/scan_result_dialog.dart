@@ -1,6 +1,5 @@
 import 'package:event_scanner_app/data/models/ticket_data.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 
 // Enum untuk menentukan status hasil scan
 enum ScanStatus { success, notFound, alreadyUsed }

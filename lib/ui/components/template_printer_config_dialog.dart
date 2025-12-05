@@ -22,7 +22,7 @@ class TemplatePrinterConfigDialog extends StatefulWidget {
 
 class _TemplatePrinterConfigDialogState
     extends State<TemplatePrinterConfigDialog> {
-  final List<String> _templates = ['Name Badge', 'Check Struct', 'Voucher'];
+  final List<String> _templates = ['Name Badge', 'Check-In Struct', 'Voucher'];
   late String _selectedTemplate;
   bool _isExpanded = false;
 
@@ -85,7 +85,6 @@ class _TemplatePrinterConfigDialogState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-
                           Text(
                             widget.printerName,
                             style: const TextStyle(

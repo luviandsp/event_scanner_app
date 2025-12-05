@@ -1,9 +1,7 @@
 import 'package:event_scanner_app/ui/pages/auth_pages/login_page_staff.dart';
 import 'package:event_scanner_app/ui/pages/detail_ticket/ticket_detil.dart';
 import 'package:event_scanner_app/ui/pages/main_page.dart';
-import 'package:event_scanner_app/ui/pages/scanner_pages/myqr_page.dart';
 import 'package:event_scanner_app/ui/pages/scanner_pages/scanner_qr_page.dart';
-import 'package:event_scanner_app/ui/pages/scanner_pages/scanner_result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
@@ -27,7 +25,7 @@ class MyApp extends StatelessWidget {
       title: 'Event Scanner App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
-      initialRoute: '/login',
+      initialRoute: '/',
       routes: {
         '/login': (context) => const LoginPageStaff(),
         '/': (context) => const MainPage(),

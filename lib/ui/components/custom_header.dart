@@ -15,7 +15,7 @@ class CustomHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final user = ref.watch(userProvider);
+    String userName = "Agung Firmansyah";
 
     return Row(
       children: [
@@ -24,25 +24,30 @@ class CustomHeader extends ConsumerWidget {
 
         const SizedBox(width: 15),
 
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Hello, Agung Firmansyah",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Hello, $userName",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Text(
-              _getGreeting(),
-              style: TextStyle(color: Colors.white70, fontSize: 14),
-            ),
-          ],
+
+              Text(
+                _getGreeting(),
+                style: TextStyle(color: Colors.white70, fontSize: 14),
+              ),
+            ],
+          ),
         ),
 
-        const Spacer(),
+        const SizedBox(width: 15),
 
         // Profile Image & Tap to Profile Page
         GestureDetector(

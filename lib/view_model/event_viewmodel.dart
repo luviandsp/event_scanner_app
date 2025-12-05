@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../data/models/event_model.dart';
-import '../../data/models/event_repository.dart';
-import '../../ui/pages/event_ticket_pages/event_detail_page.dart';
+import '../data/models/event_model.dart';
+import '../data/repositories/event_repository.dart';
+import '../ui/pages/event_ticket_pages/event_detail_page.dart';
 
 class EventViewModel extends ChangeNotifier {
   final EventRepository _repository = EventRepository();

@@ -4,6 +4,8 @@ import 'package:event_scanner_app/ui/pages/analysis_report_pages/statistic_page.
 import 'package:event_scanner_app/ui/pages/event_ticket_pages/event_page.dart';
 import 'package:event_scanner_app/ui/pages/printer_pages/printer_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../data/models/event_viewmodel.dart';
 
 class CustomBody extends StatefulWidget {
   const CustomBody({super.key});
@@ -17,56 +19,61 @@ class _CustomBodyState extends State<CustomBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-        ),
-
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
+    // Provider ditempatkan di sini, di atas semua tab.
+    // Ini memastikan ViewModel hanya dibuat sekali.
+    return ChangeNotifierProvider(
+      create: (context) => EventViewModel(),
+      child: Expanded(
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
           ),
 
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 25),
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 30.0),
-                child: TodayCalendar(),
-              ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
 
-              const SizedBox(height: 20),
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 25),
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 30.0),
+                  child: TodayCalendar(),
+                ),
 
-              Center(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      _buildTabButton('My Event', 0),
-                      _buildTabButton('My Statistic', 1),
-                      _buildTabButton('Printer', 2),
-                    ],
+                const SizedBox(height: 20),
+
+                Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        _buildTabButton('My Event', 0),
+                        _buildTabButton('My Statistic', 1),
+                        _buildTabButton('Printer', 2),
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              _buildSelectedContent(),
-            ],
+                _buildSelectedContent(),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-
+  
   Widget _buildSelectedContent() {
     switch (_selectedIndex) {
       case 0:
@@ -76,7 +83,7 @@ class _CustomBodyState extends State<CustomBody> {
       case 2:
         return PrinterPage(); // Tampilan Printer
       default:
-        return EventPage(); // Default ke Tampilan Event
+        return const EventPage(); // Default ke Tampilan Event
     }
   }
 

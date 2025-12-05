@@ -8,13 +8,12 @@ class CustomHeader extends StatefulWidget {
 }
 
 class _CustomHeaderState extends State<CustomHeader> {
-
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         // Logo Image
-        Image.asset('assets/icons/logo.png', width: 50, height: 50),
+        Image.asset('assets/images/logo.png', width: 50, height: 50),
 
         const SizedBox(width: 15),
 
@@ -22,7 +21,7 @@ class _CustomHeaderState extends State<CustomHeader> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hello, Name!",
+              "Hello, Agung Firmansyah",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -41,7 +40,9 @@ class _CustomHeaderState extends State<CustomHeader> {
         // Profile Image
         const CircleAvatar(
           radius: 25,
-          backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=5'),
+          backgroundImage: NetworkImage(
+            'https://picsum.photos/id/1005/200/200',
+          ),
         ),
       ],
     );

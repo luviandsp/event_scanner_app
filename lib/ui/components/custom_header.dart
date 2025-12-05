@@ -20,7 +20,7 @@ class CustomHeader extends ConsumerWidget {
     return Row(
       children: [
         // Logo Image
-        Image.asset('assets/icons/logo.png', width: 50, height: 50),
+        Image.asset('assets/images/logo.png', width: 50, height: 50),
 
         const SizedBox(width: 15),
 
@@ -28,7 +28,7 @@ class CustomHeader extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hello, Name!",
+              "Hello, Agung Firmansyah",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,

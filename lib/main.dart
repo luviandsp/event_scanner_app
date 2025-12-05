@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       title: 'Event Scanner App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
-      initialRoute: '/scan-ticket',
+      initialRoute: '/',
       routes: {
         '/login': (context) => const LoginPageStaff(),
         '/': (context) => const MainPage(),
